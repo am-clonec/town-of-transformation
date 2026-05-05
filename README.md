@@ -15,7 +15,7 @@ If you want a more broad example for adding roles and modifiers, you can also us
 
 -----------------------
 # License
-eheheh
+idk use it however you like
 
 # Copyright
 <p align="center">This mod is not affiliated with Among Us or Innersloth LLC, and the content contained therein is not endorsed or otherwise sponsored by Innersloth LLC. Portions of the materials contained herein are property of Innersloth LLC.</p>
