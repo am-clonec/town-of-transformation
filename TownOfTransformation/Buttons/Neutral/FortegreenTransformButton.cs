@@ -78,7 +78,7 @@ namespace TownOfTransformation.Buttons.Neutral;
 public sealed class FortegreenTransformButton : TownOfUsRoleButton<FortegreenRole>
 {
     public override string Name => "Transform";
-    public override BaseKeybind Keybind => Keybinds.SecondaryAction;
+    public override BaseKeybind Keybind => ToTKeybinds.Transform;
     public override Color TextOutlineColor => TouExampleColors.Fortegreen;
     public override float Cooldown => CD();
     public override LoadableAsset<Sprite> Sprite => TouNeutAssets.RampageSprite;

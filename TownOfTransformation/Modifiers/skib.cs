@@ -1,24 +1,33 @@
-using AmongUs.GameOptions;
-using Il2CppInterop.Runtime.Attributes;
-using Il2CppSystem.Runtime.InteropServices;
-using JetBrains.Annotations;
-using MiraAPI.Events;
 using MiraAPI.GameOptions;
 using MiraAPI.Hud;
-using MiraAPI.LocalSettings;
-using MiraAPI.Modifiers;
+using MiraAPI.Keybinds;
 using MiraAPI.Networking;
-using MiraAPI.Patches.Stubs;
-using MiraAPI.Roles;
-using MiraAPI.Utilities;
-using Reactor.Networking.Attributes;
+using MiraAPI.Utilities.Assets;
 using Reactor.Utilities;
 using TownOfTransformation.Assets;
-using TownOfTransformation.Buttons.Impostor;
-using TownOfTransformation.Modules;
 using TownOfTransformation.Options.Roles.Impostor;
-using TownOfUs;
+using TownOfTransformation.Roles.Impostor;
+using TownOfTransformation.Roles.Neutral;
 using TownOfUs.Assets;
+using TownOfUs.Buttons;
+using TownOfUs.Options.Modifiers.Alliance;
+using TownOfUs.Utilities;
+using UnityEngine;
+using MiraAPI.Utilities;
+using MiraAPI.Modifiers;
+using TownOfTransformation.Modifiers;
+using TownOfUs.Options.Roles.Crewmate;
+using TownOfUs.Roles.Crewmate;
+using TownOfTransformation.Modules;
+using AmongUs.GameOptions;
+using Il2CppInterop.Runtime.Attributes;
+using MiraAPI.Events;
+using MiraAPI.LocalSettings;
+using MiraAPI.Patches.Stubs;
+using MiraAPI.Roles;
+using Reactor.Networking.Attributes;
+using TownOfTransformation.Buttons.Impostor;
+using TownOfUs;
 using TownOfUs.Buttons.Crewmate;
 using TownOfUs.Buttons.Impostor;
 using TownOfUs.Events.Crewmate;
@@ -33,38 +42,33 @@ using TownOfUs.Modifiers.Neutral;
 using TownOfUs.Modules;
 using TownOfUs.Modules.Localization;
 using TownOfUs.Modules.Wiki;
-using TownOfUs.Options.Roles.Crewmate;
 using TownOfUs.Roles;
-using TownOfUs.Roles.Crewmate;
 using TownOfUs.Roles.Impostor;
 using TownOfUs.Roles.Neutral;
-using TownOfUs.Utilities;
-using UnityEngine;
-using MiraAPI.Utilities.Assets;
-using TownOfUs.Events;
-using TownOfUs.Options.Modifiers.Universal;
-using MiraAPI.Patches;
-using MiraAPI.Keybinds;
-using TownOfTransformation.Roles.Impostor;
-using TownOfTransformation.Roles.Neutral;
-using TownOfUs.Buttons;
-using TownOfUs.Options.Modifiers.Alliance;
-using TownOfTransformation.Modifiers;
-using Reactor.Networking;
 using HarmonyLib;
-using Rewired;
-using TMPro;
+using MiraAPI.Modifiers.Types;
+using TownOfUs.Options.Modifiers;
+using TownOfUs.Options.Modifiers.Universal;
+using TownOfUs.Options.Roles.Neutral;
+using TownOfUs.Events;
+using JetBrains.Annotations;
+using Il2CppMono.Security.Authenticode;
+using System.Collections;
 using TownOfUs.Utilities.Appearances;
-using System.Security;
+using Reactor.Utilities.Extensions;
+using TownOfUs.Networking;
+using TownOfUs.Options.Roles.Impostor;
+using TownOfUs.Options;
+using TownOfUs.Patches;
+using TMPro;
 
-namespace TownOfTransformation.Roles.Impostor;
-public sealed class SkibidiToiletRole(IntPtr cppPtr) : ImpostorRole(cppPtr), ITownOfUsRole, IWikiDiscoverable, IVisualAppearance
+namespace TownOfTransformation.Modifiers;
+
+public sealed class skib() : BaseModifier, IVisualAppearance
 {
-    public string LocaleKey => "SkibidiToilet";
-    public string RoleName => TouLocale.Get($"TouRole{LocaleKey}", "Skibidi Toilet");
-    public string RoleDescription => TouLocale.GetParsed($"TouRole{LocaleKey}IntroBlurb");
-    public string RoleLongDescription => TouLocale.GetParsed($"TouRole{LocaleKey}TabDescription", "poop ppl pls is funni");
-    public bool Transformed { get; set; }
+    public override string ModifierName => "skib test";
+    public override bool HideOnUi => false;
+
     private AnimationClip ogRun;
     
     private AnimationClip ogIdle;
@@ -72,43 +76,17 @@ public sealed class SkibidiToiletRole(IntPtr cppPtr) : ImpostorRole(cppPtr), ITo
     private bool layer;
     private string ogColorblindName;
     private string ogName;
-    
 
-    public string GetAdvancedDescription()
-    {
-        return
-            TouLocale.GetParsed($"TouRole{LocaleKey}WikiDescription") +
-            MiscUtils.AppendOptionsText(GetType());
-    }
 
-    [HideFromIl2Cpp]
-    public List<CustomButtonWikiDescription> Abilities
-    {
-        get
-        {
-            return new List<CustomButtonWikiDescription>
-            {
-                new(TouLocale.GetParsed($"TouRole{LocaleKey}BakeWiki", "Bake"),
-                    TouLocale.GetParsed($"TouRole{LocaleKey}BakeWikiDescription"),
-                    TouNeutAssets.ChefCookSprite)
-            };
-        }
-    } 
-
-    public Color RoleColor => TownOfUsColors.Impostor;
-    public ModdedRoleTeams Team => ModdedRoleTeams.Impostor;
-    public RoleAlignment RoleAlignment => RoleAlignment.ImpostorPower;
-    
-
-        public VisualAppearance GetVisualAppearance()
+    public VisualAppearance GetVisualAppearance()
     {
         var name = Player.GetDefaultModifiedAppearance().PlayerName;
         var pet = Player.GetDefaultModifiedAppearance().PetId;
-        if(Transformed)
-        {
-            name = "Skibidi";
-            pet = "pet_EmptyPet";
-        }
+       
+        
+        name = "Skibidi";
+        pet = "pet_EmptyPet";
+        
         return new VisualAppearance(Player.GetDefaultModifiedAppearance(), TownOfUsAppearances.Swooper)
         {
             PlayerName = name,
@@ -116,9 +94,8 @@ public sealed class SkibidiToiletRole(IntPtr cppPtr) : ImpostorRole(cppPtr), ITo
         };
     }
 
-    public void Transform()
+    public override void OnActivate()
     {
-        Transformed = true;
         Player.RawSetAppearance(this);
         ogIdle = Player.MyPhysics.Animations.group.IdleAnim;
         ogRun = Player.MyPhysics.Animations.group.RunAnim;
@@ -127,6 +104,7 @@ public sealed class SkibidiToiletRole(IntPtr cppPtr) : ImpostorRole(cppPtr), ITo
         Player.MyPhysics.Animations.group.IdleAnim = NormalAssets.SkibidiIdleAnimation.LoadAsset();
         Player.MyPhysics.Animations.PlayIdleAnimation();
         Player.cosmetics.gameObject.SetActive(false);
+        
         Player.MyPhysics.Animations.group.SpriteAnimator.GetComponent<SpriteRenderer>().material =
             new(Shader.Find("Sprites/Default"));
         /*ogSize = Player.Collider.transform.localScale;
@@ -140,17 +118,17 @@ public sealed class SkibidiToiletRole(IntPtr cppPtr) : ImpostorRole(cppPtr), ITo
         ogColorblindName = ColorblindName.GetComponent<TextMeshPro>().text;
        
         ColorblindName.GetComponent<TextMeshPro>().text = "Skibidi";
-        
-    
     }
-    public void Untransform()
+
+    public override void OnDeactivate()
     {
+        Player.ResetAppearance();
         Player.MyPhysics.Animations.group.RunAnim = ogRun;
         Player.MyPhysics.Animations.group.IdleAnim = ogIdle;
         
         Player.cosmetics.gameObject.SetActive(layer);
         Player.MyPhysics.Animations.PlayIdleAnimation();
-        Transformed = false;
+        
         SpriteRenderer rend = Player.MyPhysics.Animations.group.SpriteAnimator.GetComponent<SpriteRenderer>();
         rend.material = new Material(Shader.Find("Unlit/PlayerShader"));
         PlayerMaterial.SetColors(Player.cosmetics.ColorId, rend);
@@ -164,12 +142,4 @@ public sealed class SkibidiToiletRole(IntPtr cppPtr) : ImpostorRole(cppPtr), ITo
         /*Player.Collider.transform.localScale = ogSize;*/
         
     }
-    public CustomRoleConfiguration Configuration => new(this)
-    {
-        
-        Icon = RoleIcons.SkibidiToilet,
-        OptionsScreenshot = TouBanners.ImpostorRoleBanner,
-        MaxRoleCount = 1,
-        IntroSound = TouAudio.TimeLordIntroSound
-    };
 }

@@ -62,6 +62,11 @@ using TownOfUs.Options;
 using TownOfUs.Patches;
 using Epic.OnlineServices.RTC;
 using TownOfTransformation.Options.Modifiers.NeutImp;
+using Unity;
+using UnityEditor;
+using UnityEngine;
+using UnityEngineInternal;
+using TMPro;
 
 namespace TownOfTransformation.Modifiers;
 
@@ -71,6 +76,7 @@ public sealed class PoopedModifier() : TimedModifier, IVisualAppearance
     public override bool HideOnUi => false;
     public bool VisualPriority => true;
     public override float Duration => OptionGroupSingleton<SkibidiToiletOptions>.Instance.PoopDuration;
+    private SpriteRenderer overlay;
 
     public VisualAppearance GetVisualAppearance()
     {
@@ -109,11 +115,23 @@ public sealed class PoopedModifier() : TimedModifier, IVisualAppearance
     public override void OnActivate()
     {
         Player.RawSetAppearance(this);
+        if (Player.AmOwner)
+        {
+        overlay = UnityEngine.Object.Instantiate(HudManager.Instance.FullScreen, HudManager.Instance.transform);
+        overlay.transform.localPosition = new Vector3(0, 0, 10);
+        overlay.gameObject.SetActive(true);
+        HudManager.Instance.StartCoroutine(Effects.ColorFade(overlay, Color.clear, Color.white, 0.2f));
+        overlay.sprite = NormalAssets.Poop.LoadAsset();
+        }
     }
 
     public override void OnDeactivate()
     {
         Player.ResetAppearance();
+        if (Player == PlayerControl.LocalPlayer)
+        {
+        overlay.Destroy();
+        }
     }
 
     public override void FixedUpdate()

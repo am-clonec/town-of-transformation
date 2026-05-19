@@ -83,6 +83,8 @@ Modifiers/
  lilguy.cs
  PoopedModifier.cs
  PreHangryModifier.cs
+ RichGuyTest.cs
+ skib.cs
 Modules/
  Explode.cs
  ExtensionLocale.cs
@@ -111,6 +113,7 @@ Roles/Impostor/
  SkibidiToilet.cs
  SoulEaterRole.cs
 Roles/Neutral/FortegreenRole.cs
+ToTKeybinds.cs
 TouExampleColors.cs
 TouExamplePlayerColors.cs
 TouExtrasPlugin.cs
