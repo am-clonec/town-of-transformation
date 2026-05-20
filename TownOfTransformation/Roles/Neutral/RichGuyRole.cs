@@ -88,8 +88,9 @@ public sealed class RichGuyRole(IntPtr cppPtr)
 
     public Color RoleColor => TouExampleColors.Fortegreen;
     public ModdedRoleTeams Team => ModdedRoleTeams.Custom;
-    public RoleAlignment RoleAlignment => RoleAlignment.NeutralKilling;
-    public float Level { get; set; } = 0f;
+    public RoleAlignment RoleAlignment => RoleAlignment.NeutralOutlier;
+
+    public GameObject shopui;
 
     public CustomRoleConfiguration Configuration => new(this)
     {
@@ -122,7 +123,7 @@ public sealed class RichGuyRole(IntPtr cppPtr)
 
     public void OffsetButtons()
     {
-        var canVent = OptionGroupSingleton<FortegreenOptions>.Instance.CanVentAtLvl <= Level || LocalSettingsTabSingleton<TownOfUsLocalSettings>.Instance.OffsetButtonsToggle.Value;
+        var canVent = false;
         var transform = CustomButtonSingleton<FortegreenTransformButton>.Instance;
         var ignite = CustomButtonSingleton<FortegreenKillButton>.Instance;
         Coroutines.Start(MiscUtils.CoMoveButtonIndex(transform, !canVent));
@@ -135,9 +136,13 @@ public sealed class RichGuyRole(IntPtr cppPtr)
         if (Player.AmOwner)
         {
             OffsetButtons();
-            HudManager.Instance.ImpostorVentButton.graphic.sprite = NeutAssets.SentinelVentSprite.LoadAsset();
             HudManager.Instance.ImpostorVentButton.buttonLabelText.SetOutlineColor(TouExampleColors.Fortegreen);
+
         }
+
+        shopui = UnityEngine.Object.Instantiate(NormalAssets.RichGuyShopUI.LoadAsset());
+        shopui.transform.localPosition = new Vector3(0, 0, 10);
+
     }
 
     public override void Deinitialize(PlayerControl targetPlayer)
