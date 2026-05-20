@@ -45,6 +45,10 @@ using TownOfUs.Modifiers.Neutral;
 using TownOfUs.Modules;
 using TownOfUs.Utilities.Appearances;
 using AsmResolver.IO;
+using MiraAPI.Events.Mira;
+using MiraAPI.Events.Vanilla;
+using MiraAPI.Patches;
+using MiraAPI.Events.Vanilla.Player;
 
 
 namespace TownOfTransformation.Roles.Neutral;
@@ -57,7 +61,7 @@ public sealed class RichGuyRole(IntPtr cppPtr)
     public string LocaleKey => "RichGuy";
     public string RoleName => TouLocale.Get($"ExampleRole{LocaleKey}", "Rich Guy");
     public string RoleDescription => TouLocale.GetParsed($"ExampleRole{LocaleKey}IntroBlurb", "Do your tasks to get money!");
-    public string RoleLongDescription => TouLocale.GetParsed($"ExampleRole{LocaleKey}TabDescription");
+    public string RoleLongDescription => TouLocale.GetParsed($"ExampleRole{LocaleKey}TabDescription", "You have {money} money.").Replace("{money}",Money.ToString());
     public float Money { get; set; } = 0f;
     private int PrevComp = 0;
     public string GetAdvancedDescription()
@@ -195,6 +199,13 @@ public sealed class RichGuyRole(IntPtr cppPtr)
         PrevComp = CurComp;
     }
 
+    [RegisterEvent]
+    public static void OnTaskComplete(CompleteTaskEvent e)
+    {
+        var p = e.Player;
+        var Role = p.Data.Role as RichGuyRole;
+        Role.Money = Role.Money + OptionGroupSingleton<RichGuyOptions>.Instance.MoneyPerTask;
+    }
     public override bool DidWin(GameOverReason gameOverReason)
     {
         return WinConditionMet();
