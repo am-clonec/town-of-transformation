@@ -58,11 +58,11 @@ using Il2CppMono.Security.Authenticode;
 using System.Collections;
 using TownOfUs.Utilities.Appearances;
 using Reactor.Utilities.Extensions;
+using TownOfTransformation.Features;
 using TownOfUs.Networking;
 using TownOfUs.Options.Roles.Impostor;
 using TownOfUs.Options;
 using TownOfUs.Patches;
-using TownOfTransformation.Features.MainMenu;
 
 namespace TownOfTransformation.Patches;
 [HarmonyPatch]

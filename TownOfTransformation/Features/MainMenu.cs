@@ -1,10 +1,8 @@
 // here too, this wouldn't have existed without Pix!
 
-using System;
-using MiraAPI.Utilities;
 using UnityEngine;
 
-namespace TownOfTransformation.Features.MainMenu;
+namespace TownOfTransformation.Features;
 
 public static class ReworkedMainMenu
 {
@@ -13,13 +11,13 @@ public static class ReworkedMainMenu
         menu.transform.FindChild("MainUI/AspectScaler/BackgroundTexture").GetComponent<SpriteRenderer>().color = new(0, 0.5f, 0.8f, 1);
         foreach (var btn in menu.GetComponentsInChildren<PassiveButton>())
         {
-            var r = 59 / 255;
-            var g = 123 / 255;
-            var b = 41 / 255;
+            var r = 1.3f;
+            var g = 1.5f;
+            var b = 1;
             btn.inactiveSprites.GetComponent<SpriteRenderer>().material.color = new(r, g, b, 1);
-            btn.activeSprites.GetComponent<SpriteRenderer>().material.color = new(0, 0.75f, 1.5f, 1);
+            btn.activeSprites.GetComponent<SpriteRenderer>().material.color = new(r + 0.5f, g + 0.5f, b + 0.5f, 1);
         }
 
-        menu.mainButtons[0].transform.parent.parent.GetComponent<SpriteRenderer>().material.color = new(0f, 0.9f, 1.1f, 1);
+        menu.mainButtons[0].transform.parent.parent.GetComponent<SpriteRenderer>().material.color = new(0f, 1.2f, 0.9f, 1);
     }
 }

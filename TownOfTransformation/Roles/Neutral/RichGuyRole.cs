@@ -107,7 +107,8 @@ public sealed class RichGuyRole(IntPtr cppPtr)
 
     public CustomRoleConfiguration Configuration => new(this)
     {
-        CanUseVent = false,
+        CanUseVent = true,
+        UseVanillaKillButton = true,
         IntroSound = TouAudio.GlitchSound,
         Icon = RoleIcons.Sentinel,
         GhostRole = (RoleTypes)RoleId.Get<NeutralGhostRole>()

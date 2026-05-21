@@ -98,7 +98,8 @@ public class RichGuyPurchases : MonoBehaviour
 
     public static void RichGuyInit(PlayerControl richguy)
     {
-        var role = richguy.Data.Role as RichGuyRole;
+        if (richguy.Data.Role is not RichGuyRole role) return;
+        
         var shop = role.shopui.transform.FindChild("Shop");
         var revealer = shop.transform.FindChild("Revealer");
         var revealerprice = revealer.transform.FindChild("Purchase");
