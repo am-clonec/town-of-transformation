@@ -1,5 +1,5 @@
 > [!NOTE]
-> This mod would not have been possible without the support of Pix!
+> This mod would not have been possible without the support of [Pix](https://github.com/WanderingPix/) (@WanderingPix)!
 > Also a lot of thanks to everyone that helped me in the [All Of Us Mods discord](https://discord.com/invite/FYYqJU2bvp) and the people over at the [TOU: Mira](https://github.com/AU-Avengers/TOU-Mira) development team!
 
 -----------------------
