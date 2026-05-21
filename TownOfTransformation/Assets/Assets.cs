@@ -8,7 +8,7 @@ public static class NormalAssets
 {
     public static readonly AssetBundle Bundle = AssetBundleManager.Load("tot-bundle");
     private const string ShortPath = "TownOfTransformation.Resources";
-    public static LoadableAsset<Sprite> Banner { get; } = new LoadableResourceAsset($"{ShortPath}.tot-banner-final.png");
+    public static LoadableAsset<Sprite> Banner { get; } = new LoadableResourceAsset($"{ShortPath}.tot-banner-final.png", 196);
     public static LoadableAsset<Sprite> Poop { get; } = new LoadableResourceAsset($"{ShortPath}.shi.png");
     public static LoadableBundleAsset<AnimationClip> LilGuyAnimation { get; } = new("lil guy.anim", Bundle);
     public static LoadableBundleAsset<AnimationClip> SkibidiWalkAnimation { get; } = new("SkibidiWalk.anim", Bundle);
