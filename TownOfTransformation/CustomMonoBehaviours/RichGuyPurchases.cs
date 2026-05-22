@@ -79,16 +79,31 @@ public class RichGuyPurchases : MonoBehaviour
 
     public static void OnRevealPurchase(PlayerControl richguy)
     {
-        var role = richguy.Data.Role as RichGuyRole;
-        if (role.RevealsUsed < OptionGroupSingleton<RichGuyOptions>.Instance.MaxRevealUses && role.Money >= role.RevealerPrice)
-        {
-        role.RevealPurchase();
-        role.Money -= role.RevealerPrice;
-        role.RevealerPrice += OptionGroupSingleton<RichGuyOptions>.Instance.RevealPriceIncrease;
-        } else
+        if (richguy.Data.Role is not RichGuyRole role) return;
+        
+        if (role.RevealsUsed >= OptionGroupSingleton<RichGuyOptions>.Instance.MaxRevealUses && OptionGroupSingleton<RichGuyOptions>.Instance.MaxRevealUses != 0)
         {
             role.RevealPurchaseFailed(1);
+        } else if (role.Money < role.RevealerPrice)
+        {
+            role.RevealPurchaseFailed(2);
+        } else
+        {
+            role.RevealPurchase();
         }
+
+
+/*        if ((role.RevealsUsed < OptionGroupSingleton<RichGuyOptions>.Instance.MaxRevealUses || OptionGroupSingleton<RichGuyOptions>.Instance.MaxRevealUses == 0f) && role.Money >= role.RevealerPrice)
+        {
+        role.RevealPurchase();
+        } else if (role.Money >= role.RevealerPrice && role.RevealsUsed > OptionGroupSingleton<RichGuyOptions>.Instance.MaxRevealUses)
+        {
+            role.RevealPurchaseFailed(1);
+        } else
+        {
+            role.RevealPurchaseFailed(2);
+        }
+        Old stuff*/
     }
 
     public void OnZoomoutPurchase(PlayerControl richguy)

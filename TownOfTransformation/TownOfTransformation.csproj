@@ -5,11 +5,11 @@
         <DebugType>embedded</DebugType>
 
         <VersionPrefix>1.0.0</VersionPrefix>
-        <VersionSuffix>dev.1</VersionSuffix>
+        <VersionSuffix>dev.2</VersionSuffix>
         <RootNamespace>TownOfTransformation</RootNamespace>
-        <Description>My self-made beautiful mod. Kinda just adds impostor versions of several roles.</Description>
+        <Description>My self-made beautiful mod. Adds some transforming roles.</Description>
         <NoWarn>1591;1707</NoWarn>
-        <!-- <Authors>your name</Authors> -->
+        <Authors>greenlemon (aka CloneC)</Authors>
     </PropertyGroup>
 
     <ItemGroup>

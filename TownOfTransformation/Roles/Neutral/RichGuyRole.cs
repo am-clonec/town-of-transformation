@@ -96,19 +96,19 @@ public sealed class RichGuyRole(IntPtr cppPtr)
 
     public GameObject shopui;
     public float ExtraLifePrice { get; set; } = OptionGroupSingleton<RichGuyOptions>.Instance.InitialLifePrice;
-    public float ExtraLivesUsed { get; set; }
+    public int ExtraLivesUsed { get; set; }
     public float GoldifyPrice { get; set; } = OptionGroupSingleton<RichGuyOptions>.Instance.InitialGoldifyPrice;
-    public float GoldifiesUsed { get; set; }
+    public int GoldifiesUsed { get; set; }
     public float RevealerPrice { get; set; } = OptionGroupSingleton<RichGuyOptions>.Instance.InitialRevealPrice;
-    public float RevealsUsed { get; set; }
+    public int RevealsUsed { get; set; }
     public float ZoomoutPrice { get; set; } = OptionGroupSingleton<RichGuyOptions>.Instance.InitialZoomoutPrice;
-    public float ZoomoutsUsed { get; set; }
+    public int ZoomoutsUsed { get; set; }
     public float ExtraVotePrice { get; set; } = OptionGroupSingleton<RichGuyOptions>.Instance.InitialExtraVotePrice;
 
     public CustomRoleConfiguration Configuration => new(this)
     {
-        CanUseVent = true,
-        UseVanillaKillButton = true,
+        CanUseVent = false,
+        UseVanillaKillButton = false,
         IntroSound = TouAudio.GlitchSound,
         Icon = RoleIcons.Sentinel,
         GhostRole = (RoleTypes)RoleId.Get<NeutralGhostRole>()
@@ -123,12 +123,13 @@ public sealed class RichGuyRole(IntPtr cppPtr)
 
     public void RevealPurchase()
     {
-                PlayerControl.LocalPlayer.NetTransform.Halt();
+        PlayerControl.LocalPlayer.NetTransform.Halt();
 
         if (Minigame.Instance)
         {
             return;
         }
+
         shopui.SetActive(false);
         var player1Menu = CustomPlayerMenu.Create();
         player1Menu.transform.FindChild("PhoneUI").GetChild(0).GetComponent<SpriteRenderer>().material =
@@ -162,13 +163,20 @@ public sealed class RichGuyRole(IntPtr cppPtr)
 
     public void Reveal(PlayerControl target)
     {
+        if (target != null)
+        {
         Helpers.CreateAndShowNotification(
             TouLocale.GetParsed("ToTRoleRichGuyRevealNotif", "{target} is a {role}!").Replace("{target}",target.name).Replace("{role}",Helpers.GetRoleName(target.Data.Role)),
             Color.white, new Vector3(0f, 1f, -20f), spr: TouRoleIcons.Chef.LoadAsset());
+        Money -= RevealerPrice;
+        RevealerPrice += OptionGroupSingleton<RichGuyOptions>.Instance.RevealPriceIncrease;
+        RevealsUsed += 1;
+        }
     }
 
     public void RevealPurchaseFailed(int reason)
     {
+        shopui.SetActive(false);
         if (reason == 1)
         {
         Helpers.CreateAndShowNotification(
