@@ -52,6 +52,7 @@ using MiraAPI.Events.Vanilla.Player;
 using UnityEngine;
 using UnityEngine.UI;
 using TownOfTransformation.CustomMonoBehaviours;
+using TownOfTransformation.Modifiers;
 
 namespace TownOfTransformation.Roles.Neutral;
 
@@ -138,7 +139,7 @@ public sealed class RichGuyRole(IntPtr cppPtr)
             PlayerControl.LocalPlayer.cosmetics.currentBodySprite.BodySprite.material;
 
         player1Menu.Begin(
-            plr => plr != null && plr != PlayerControl.LocalPlayer && !plr.Data.IsDead && !(plr.IsRole<ImpostorRole>()),
+            plr => plr != null && plr != PlayerControl.LocalPlayer && !plr.Data.IsDead,
             plr =>
             {
                 player1Menu.Close();
@@ -188,7 +189,109 @@ public sealed class RichGuyRole(IntPtr cppPtr)
             TouLocale.GetParsed("ToTRoleRichGuyRevealNotif", "You don't have enough money to reveal!"),
             Color.white, new Vector3(0f, 1f, -20f), spr: TouRoleIcons.Chef.LoadAsset());
         }
-    }    
+    }
+
+        public void GoldifyPurchase()
+    {
+        PlayerControl.LocalPlayer.NetTransform.Halt();
+
+        if (Minigame.Instance)
+        {
+            return;
+        }
+
+        shopui.SetActive(false);
+        var player1Menu = CustomPlayerMenu.Create();
+        player1Menu.transform.FindChild("PhoneUI").GetChild(0).GetComponent<SpriteRenderer>().material =
+            PlayerControl.LocalPlayer.cosmetics.currentBodySprite.BodySprite.material;
+        player1Menu.transform.FindChild("PhoneUI").GetChild(1).GetComponent<SpriteRenderer>().material =
+            PlayerControl.LocalPlayer.cosmetics.currentBodySprite.BodySprite.material;
+
+        player1Menu.Begin(
+            plr => plr != null && plr != PlayerControl.LocalPlayer && !plr.Data.IsDead,
+            plr =>
+            {
+                player1Menu.Close();
+
+                if (plr == null)
+                {
+                    return;
+                }
+                Goldify(plr);
+                
+            }
+        );
+        foreach (var panel in player1Menu.potentialVictims)
+        {
+            panel.PlayerIcon.cosmetics.SetPhantomRoleAlpha(1f);
+            if (panel.NameText.text != PlayerControl.LocalPlayer.Data.PlayerName)
+            {
+                panel.NameText.color = Color.white;
+            }
+        }
+    }
+
+    public void Goldify(PlayerControl target)
+    {
+        if (target != null && target != PlayerControl.LocalPlayer)
+        {
+        target.RpcAddModifier<GoldifiedModifier>();
+        Helpers.CreateAndShowNotification(
+            TouLocale.GetParsed("ToTRoleRichGuyRevealNotif", "{target} has been goldified!").Replace("{target}",target.name),
+            Color.white, new Vector3(0f, 1f, -20f), spr: TouRoleIcons.Chef.LoadAsset());
+        Money -= GoldifyPrice;
+        GoldifyPrice += OptionGroupSingleton<RichGuyOptions>.Instance.GoldifyPriceIncrease;
+        GoldifiesUsed += 1;
+        }
+    }
+
+    public void GoldifyPurchaseFailed(int reason)
+    {
+        shopui.SetActive(false);
+        if (reason == 1)
+        {
+        Helpers.CreateAndShowNotification(
+            TouLocale.GetParsed("ToTRoleRichGuyGoldifyFailed1Notif", "You've reached the max number of goldify uses!"),
+            Color.white, new Vector3(0f, 1f, -20f), spr: TouRoleIcons.Chef.LoadAsset());
+        } else if (reason == 2)
+        {
+        Helpers.CreateAndShowNotification(
+            TouLocale.GetParsed("ToTRoleRichGuyGoldifyFailed2Notif", "You don't have enough money to goldify!"),
+            Color.white, new Vector3(0f, 1f, -20f), spr: TouRoleIcons.Chef.LoadAsset());
+        }
+    }      
+
+    public void ZoomoutPurchase()
+    {
+        shopui.SetActive(false);
+        Money -= ZoomoutPrice;
+        ZoomoutPrice += OptionGroupSingleton<RichGuyOptions>.Instance.ZoomoutPriceIncrease;
+        ZoomoutsUsed += 1;
+        Zoom();
+    }
+
+    public void ZoomPurchaseFailed(int reason)
+    {
+        shopui.SetActive(false);
+        if (reason == 1)
+        {
+        Helpers.CreateAndShowNotification(
+            TouLocale.GetParsed("ToTRoleRichGuyZoomoutFailed1Notif", "You've reached the max number of zoomouts!"),
+            Color.white, new Vector3(0f, 1f, -20f), spr: TouRoleIcons.Chef.LoadAsset());
+        } else if (reason == 2)
+        {
+        Helpers.CreateAndShowNotification(
+            TouLocale.GetParsed("ToTRoleRichGuyZoomoutFailed2Notif", "You don't have enough money to zoom out!"),
+            Color.white, new Vector3(0f, 1f, -20f), spr: TouRoleIcons.Chef.LoadAsset());
+        }
+    }
+
+    public void Zoom()
+    {
+        TownOfUs.Patches.HudManagerPatches.AdjustCameraSize(3f + (ZoomoutsUsed / 2f));
+        //if (Camera.main != null)
+        //    Camera.main.orthographicSize = 3f + (ZoomoutsUsed/2f);
+    }
 
     public bool WinConditionMet()
     {
@@ -218,32 +321,22 @@ public sealed class RichGuyRole(IntPtr cppPtr)
         shopui = UnityEngine.Object.Instantiate(NormalAssets.RichGuyShopUI.LoadAsset());
         shopui.transform.localPosition = new Vector3(0, 0, 10);
         shopui.SetActive(false);
-        RichGuyPurchases.RichGuyInit(PlayerControl.LocalPlayer);
         var shop = shopui.transform.FindChild("Shop");
         var revealer = shop.transform.FindChild("Revealer");
         var revealerprice = revealer.transform.FindChild("Purchase");
         Button revealertext = revealerprice.GetComponent<Button>();
-        revealertext.onClick.AddListener(new System.Action(HandleRevealClick));
+        revealertext.onClick.AddListener(new System.Action(RichGuyPurchases.HandleRevealClick));
+        var goldifier = shop.transform.FindChild("Goldify");
+        var goldifierprice = goldifier.transform.FindChild("Purchase");
+        Button goldifiertext = goldifierprice.GetComponent<Button>();
+        goldifiertext.onClick.AddListener(new System.Action(RichGuyPurchases.HandleGoldifyClick));
+        var zoomout = shop.transform.FindChild("ZoomOut");
+        var zoomoutprice = zoomout.transform.FindChild("Purchase");
+        Button zoomouttext = zoomoutprice.GetComponent<Button>();
+        zoomouttext.onClick.AddListener(new System.Action(RichGuyPurchases.HandleZoomoutClick));
 
     }
-    public void HandleRevealClick()
-    {
-        OnRevealPurchase();
-    }
-
-        public void OnRevealPurchase()
-    {
-        
-        if (RevealsUsed < OptionGroupSingleton<RichGuyOptions>.Instance.MaxRevealUses && Money >= RevealerPrice)
-        {
-        RevealPurchase();
-        Money -= RevealerPrice;
-        RevealerPrice += OptionGroupSingleton<RichGuyOptions>.Instance.RevealPriceIncrease;
-        } else
-        {
-            RevealPurchaseFailed(1);
-        }
-    }
+  
 
     public override void Deinitialize(PlayerControl targetPlayer)
     {
@@ -257,52 +350,7 @@ public sealed class RichGuyRole(IntPtr cppPtr)
     }
 
 
-    private static void GetTaskCounts(PlayerControl player, out int completed, out int total)
-    {
-        completed = 0;
-        total = 0;
 
-        if (player == null || player.Data == null)
-        {
-            return;
-        }
-
-        if (player.myTasks != null && player.myTasks.Count > 0)
-        {
-            var tasks = player.myTasks.ToArray().Where(x => !PlayerTask.TaskIsEmergency(x) && !x.TryCast<ImportantTextTask>());
-            foreach (var t in tasks)
-            {
-                total++;
-                var taskInfo = player.Data.FindTaskById(t.Id);
-                var isComplete = taskInfo != null ? taskInfo.Complete : t.IsComplete;
-                if (isComplete)
-                {
-                    completed++;
-                }
-            }
-
-            return;
-        }
-
-        foreach (var info in player.Data.Tasks)
-        {
-            total++;
-            if (info.Complete)
-            {
-                completed++;
-            }
-        }
-    }
-    
-    public void CheckTaskCompleted()
-    {
-        GetTaskCounts(Player, out int CurComp, out int CurTotal);
-        if (CurComp > PrevComp)
-        {
-            Money = Money + OptionGroupSingleton<RichGuyOptions>.Instance.MoneyPerTask;
-        }
-        PrevComp = CurComp;
-    }
 
     [RegisterEvent]
     public static void OnTaskComplete(CompleteTaskEvent e)

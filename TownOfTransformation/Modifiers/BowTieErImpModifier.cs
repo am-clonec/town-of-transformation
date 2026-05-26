@@ -79,6 +79,8 @@ public sealed class BowTieErModifier : TouGameModifier, IWikiDiscoverable
     public override ModifierFaction FactionType => ModifierFaction.NonCrewVisibility;
     public override string IntroInfo => IntroText();
     public override string LocaleKey => "BowTieEr";
+
+    public override bool HideFromGuessing => true;
         public override string GetDescription()
     {
         if (OptionGroupSingleton<BowTieErOptions>.Instance.BowType.Value == (int)BType.PinkTie)

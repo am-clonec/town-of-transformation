@@ -62,19 +62,32 @@ using TownOfUs.Options;
 using TownOfUs.Patches;
 using TownOfTransformation.Options.Roles.Neutral;
 using UnityEngine.UI;
+using Rewired.Utils.Classes.Data;
 
 
 namespace TownOfTransformation.CustomMonoBehaviours;
 public class RichGuyPurchases : MonoBehaviour
 {
+
     public void OnLifePurchase(PlayerControl richguy)
     {
         //todo
     }
 
-    public void OnGoldifyPurchase(PlayerControl richguy)
+    public static void OnGoldifyPurchase(PlayerControl richguy)
     {
-        //todo
+        if (richguy.Data.Role is not RichGuyRole role) return;
+        
+        if (role.GoldifiesUsed >= OptionGroupSingleton<RichGuyOptions>.Instance.MaxGoldifyUses && OptionGroupSingleton<RichGuyOptions>.Instance.MaxGoldifyUses != 0)
+        {
+            role.GoldifyPurchaseFailed(1);
+        } else if (role.Money < role.GoldifyPrice)
+        {
+            role.GoldifyPurchaseFailed(2);
+        } else
+        {
+            role.GoldifyPurchase();
+        }
     }
 
     public static void OnRevealPurchase(PlayerControl richguy)
@@ -106,24 +119,35 @@ public class RichGuyPurchases : MonoBehaviour
         Old stuff*/
     }
 
-    public void OnZoomoutPurchase(PlayerControl richguy)
-    {
-        //todo
-    }
-
-    public static void RichGuyInit(PlayerControl richguy)
+    public static void OnZoomoutPurchase(PlayerControl richguy)
     {
         if (richguy.Data.Role is not RichGuyRole role) return;
-        
-        var shop = role.shopui.transform.FindChild("Shop");
-        var revealer = shop.transform.FindChild("Revealer");
-        var revealerprice = revealer.transform.FindChild("Purchase");
-        Button revealertext = revealerprice.GetComponent<Button>();
-        revealertext.onClick.AddListener(new System.Action(HandleRevealClick));
+        if (role.ZoomoutsUsed >= OptionGroupSingleton<RichGuyOptions>.Instance.MaxZoomoutUses)
+        {
+            role.ZoomPurchaseFailed(1);
+        } else if (role.Money < role.ZoomoutPrice)
+        {
+            role.ZoomPurchaseFailed(2);
+        } else
+        {
+            role.ZoomoutPurchase();
+            
+        }
     }
+
+
 
     public static void HandleRevealClick()
     {
         OnRevealPurchase(PlayerControl.LocalPlayer);
+    }
+    public static void HandleGoldifyClick()
+    {
+        OnGoldifyPurchase(PlayerControl.LocalPlayer);
+    }
+
+    public static void HandleZoomoutClick()
+    {
+        OnZoomoutPurchase(PlayerControl.LocalPlayer);
     }
 }

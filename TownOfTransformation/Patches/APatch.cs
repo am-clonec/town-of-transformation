@@ -13,7 +13,7 @@ public class Patch
     public static bool Prefix(PlayerPhysics __instance)
     {
         if (PlayerControl.AllPlayerControls.ToArray().First(x => x.MyPhysics == __instance)
-            .HasModifier<PoopedModifier>())
+            .HasModifier<GoldifiedModifier>())
         {
             if (__instance.body.velocity.x < -0.01f)
             {
