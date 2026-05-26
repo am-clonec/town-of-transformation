@@ -267,7 +267,7 @@ public sealed class RichGuyRole(IntPtr cppPtr)
         Money -= ZoomoutPrice;
         ZoomoutPrice += OptionGroupSingleton<RichGuyOptions>.Instance.ZoomoutPriceIncrease;
         ZoomoutsUsed += 1;
-        Zoom();
+        //Zoom();
     }
 
     public void ZoomPurchaseFailed(int reason)
@@ -291,6 +291,11 @@ public sealed class RichGuyRole(IntPtr cppPtr)
         TownOfUs.Patches.HudManagerPatches.AdjustCameraSize(3f + (ZoomoutsUsed / 2f));
         //if (Camera.main != null)
         //    Camera.main.orthographicSize = 3f + (ZoomoutsUsed/2f);
+    }
+
+    public void ZoomReset()
+    {
+        TownOfUs.Patches.HudManagerPatches.AdjustCameraSize(3f);
     }
 
     public bool WinConditionMet()

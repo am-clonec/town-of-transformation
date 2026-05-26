@@ -18,12 +18,12 @@ namespace TownOfTransformation.Events;
 
 public static class RichGuyEvents
 {
-    [RegisterEvent]
+/*    [RegisterEvent]
     public static void EndMeetingEventHandler(EndMeetingEvent @event)
     {
         if (PlayerControl.LocalPlayer.Data.Role is not RichGuyRole role) return;
         role.Zoom();
-    }
+    }*/
     [RegisterEvent]
     public static void BeforeMurderEventHandler(BeforeMurderEvent @event)
     {
