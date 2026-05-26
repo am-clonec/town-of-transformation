@@ -1,15 +1,15 @@
 ManifestFileVersion: 0
-CRC: 2428949467
+CRC: 3842019869
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: df730bb53e2c0e393ccc3ae8e3b7cb77
+    Hash: ee88c2b3337ffde4a21310508f8af951
   TypeTreeHash:
     serializedVersion: 2
     Hash: 7857b1e28810ac03ae29902af50fb564
   IncrementalBuildHash:
     serializedVersion: 2
-    Hash: df730bb53e2c0e393ccc3ae8e3b7cb77
+    Hash: ee88c2b3337ffde4a21310508f8af951
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -87,6 +87,7 @@ Assets:
 - Assets/UI.png
 - Assets/SkibidiWalk.anim
 - Assets/SkibidiIdle.anim
+- Assets/richguyspritesheet.png
 - Assets/RichGuyUI.prefab
 - Assets/amongodollar 1.png
 - Assets/lil guy.anim
@@ -97,4 +98,5 @@ Assets:
 - Assets/statue.anim
 - Assets/TextMesh Pro/Resources/Fonts & Materials/Brook-FREE SDF.asset
 - Assets/spritesheet.png
+- Assets/RichGuyWalk.anim
 Dependencies: []

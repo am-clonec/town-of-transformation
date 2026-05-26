@@ -12,7 +12,7 @@ using TownOfUs.Buttons;
 using TownOfUs.Modifiers.Game.Crewmate;
 using MiraAPI.Events.Vanilla.Meeting;
 using TownOfTransformation.Roles.Neutral;
-
+using MiraAPI.Networking;
 
 namespace TownOfTransformation.Events;
 
@@ -23,5 +23,14 @@ public static class RichGuyEvents
     {
         if (PlayerControl.LocalPlayer.Data.Role is not RichGuyRole role) return;
         role.Zoom();
+    }
+    [RegisterEvent]
+    public static void BeforeMurderEventHandler(BeforeMurderEvent @event)
+    {
+        if (@event.Target.HasModifier<RichGuyTransformedModifier>())
+        {
+            @event.Cancel();
+            CustomMurderRpc.RpcCustomMurder(source:@event.Target,target:@event.Source,resetKillTimer:false,createDeadBody:false,teleportMurderer:false,showKillAnim:false,playKillSound:false);
+        }
     }
 }
