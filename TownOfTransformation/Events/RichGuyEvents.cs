@@ -31,6 +31,13 @@ public static class RichGuyEvents
         {
             @event.Cancel();
             CustomMurderRpc.RpcCustomMurder(source:@event.Target,target:@event.Source,resetKillTimer:false,createDeadBody:false,teleportMurderer:false,showKillAnim:false,playKillSound:false);
+        } else if (@event.Target.HasModifier<RichGuyExtraLifeModifier>())
+        {
+            @event.Cancel();
+            @event.Source.SetKillTimer(@event.Source.GetKillCooldown());
+            @event.Target.RemoveModifier<RichGuyExtraLifeModifier>();
         }
     }
+
+    
 }

@@ -69,9 +69,20 @@ namespace TownOfTransformation.CustomMonoBehaviours;
 public class RichGuyPurchases : MonoBehaviour
 {
 
-    public void OnLifePurchase(PlayerControl richguy)
+    public static void OnLifePurchase(PlayerControl richguy)
     {
-        //todo
+        if (richguy.Data.Role is not RichGuyRole role) return;
+
+        if (role.ExtraLivesUsed >= OptionGroupSingleton<RichGuyOptions>.Instance.MaxExtraLives && OptionGroupSingleton<RichGuyOptions>.Instance.MaxExtraLives != 0)
+        {
+            role.LifePurchaseFailed(1);
+        } else if (role.Money < role.ExtraLifePrice)
+        {
+            role.LifePurchaseFailed(2);
+        } else
+        {
+            role.LifePurchase();
+        }
     }
 
     public static void OnGoldifyPurchase(PlayerControl richguy)
@@ -136,7 +147,10 @@ public class RichGuyPurchases : MonoBehaviour
     }
 
 
-
+    public static void HandleExtraLifeClick()
+    {
+        OnLifePurchase(PlayerControl.LocalPlayer);
+    }
     public static void HandleRevealClick()
     {
         OnRevealPurchase(PlayerControl.LocalPlayer);

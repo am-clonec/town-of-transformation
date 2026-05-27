@@ -298,6 +298,34 @@ public sealed class RichGuyRole(IntPtr cppPtr)
         TownOfUs.Patches.HudManagerPatches.AdjustCameraSize(3f);
     }
 
+    public void LifePurchaseFailed(int reason)
+    {
+        shopui.SetActive(false);
+        if (reason == 1)
+        {
+        Helpers.CreateAndShowNotification(
+            TouLocale.GetParsed("ToTRoleRichGuyZoomoutFailed1Notif", "You've reached the max number of extra lives!"),
+            Color.white, new Vector3(0f, 1f, -20f), spr: TouRoleIcons.Chef.LoadAsset());
+        } else if (reason == 2)
+        {
+        Helpers.CreateAndShowNotification(
+            TouLocale.GetParsed("ToTRoleRichGuyZoomoutFailed2Notif", "You don't have enough money to get another life!"),
+            Color.white, new Vector3(0f, 1f, -20f), spr: TouRoleIcons.Chef.LoadAsset());
+        }
+    }
+
+    public void LifePurchase()
+    {
+        PlayerControl.LocalPlayer.AddModifier<RichGuyExtraLifeModifier>();
+        shopui.SetActive(false);
+        Money -= ExtraLifePrice;
+        ExtraLifePrice += OptionGroupSingleton<RichGuyOptions>.Instance.LifePriceIncrease;
+        ExtraLivesUsed += 1;
+        Helpers.CreateAndShowNotification(
+            TouLocale.GetParsed("ToTRoleRichGuyZoomoutFailed2Notif", "You have gotten another life!"),
+            Color.white, new Vector3(0f, 1f, -20f), spr: TouRoleIcons.Chef.LoadAsset());
+    }
+
     public bool WinConditionMet()
     {
         return false;
@@ -339,6 +367,11 @@ public sealed class RichGuyRole(IntPtr cppPtr)
         var zoomoutprice = zoomout.transform.FindChild("Purchase");
         Button zoomouttext = zoomoutprice.GetComponent<Button>();
         zoomouttext.onClick.AddListener(new System.Action(RichGuyPurchases.HandleZoomoutClick));
+        var life = shop.transform.FindChild("ExtraLife");
+        var lifeprice = life.transform.FindChild("Purchase");
+        Button lifetext = lifeprice.GetComponent<Button>();
+        lifetext.onClick.AddListener(new System.Action(RichGuyPurchases.HandleExtraLifeClick));
+        Console.print("Started yippees");
 
     }
   
