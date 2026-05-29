@@ -1,6 +1,7 @@
 > [!NOTE]
 > This mod would not have been possible without the support of [Pix](https://github.com/WanderingPix/) (@WanderingPix)!
 > Also a lot of thanks to everyone that helped me in the [All Of Us Mods discord](https://discord.com/invite/FYYqJU2bvp) and the people over at the [TOU: Mira](https://github.com/AU-Avengers/TOU-Mira) development team!
+> Also this thing is probably not gonna be developed a lot anymore as I've started working on [RFS](https://github.com/Reach-For-Stars-Team), a modpack including some fun stuff.
 
 -----------------------
 
